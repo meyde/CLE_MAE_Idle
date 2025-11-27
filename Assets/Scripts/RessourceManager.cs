@@ -5,7 +5,7 @@ using System.Collections;
 public class RessourceManager
     : MonoBehaviour
 {
-    public float voltAmount;
+    public float volts;
     public int voltIncrease;
     public int wires;
     public float wireCost;
@@ -35,13 +35,13 @@ public class RessourceManager
     }
     public void charging()
     {
-        voltAmount += voltIncrease;
+        volts += voltIncrease;
     }
     public void betterWiresBuy()
     {
-        if (voltAmount >= wireCost)
+        if (volts >= wireCost)
         {
-            voltAmount -= wireCost;
+            volts -= wireCost;
             wires += wiresPerBuy;
             wireCost = wireCost*1.5f;
             wiresPerBuy += 1;
@@ -49,9 +49,9 @@ public class RessourceManager
     }
     public void staticGatheringBuy()
     {
-        if (voltAmount >= staticsVoltCost && wires>= staticsWireCost) 
+        if (volts >= staticsVoltCost && wires>= staticsWireCost) 
         {
-            voltAmount -= staticsVoltCost;
+            volts -= staticsVoltCost;
             wires -= staticsWireCost;
             staticsVoltCost = staticsVoltCost * 1.5f;
             staticsWireCost = Mathf.RoundToInt(staticsWireCost * 1.5f);
