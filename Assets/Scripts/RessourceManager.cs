@@ -7,24 +7,41 @@ public class RessourceManager
 {
     public float volts;
     public int voltIncrease;
+    public GameObject wireButton;
     public int wires;
     public float wireCost;
+    public float initialWireCost;
+    public int wiresBought;
     public int statics;
-    public int wiresPerBuy;
+    public GameObject staticButton;
+    public float staticsInitialVoltCost;
     public float staticsVoltCost;
+    public int staticsInitialWireCost;
     public int staticsWireCost;
-    public int staticsPerBuy;
+    public int staticsBought;
     public int staticChargeDelay;
+    public GameObject toolButton;
+    public int tools;
+    public float toolsVoltCost;
+    public float toolsInitialVoltCost;
+    public int toolsWireCost;
+    public int toolsInitialWireCost;
+    public int toolsInitialStaticCost;
+    public int toolsStaticCost;
+    public int toolsBought;
+    public string doorRessourceCostText;
+    public int doorState;
+    public int doorVoltCost;
+    public int doorWiresCost;
+    public int doorStaticCost;
+    public int doorToolsCost;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        wireCost = 10;
-        voltIncrease = 1 ;
-        wiresPerBuy = 1;
-        staticsVoltCost = 500f;
-        staticsWireCost = 10;
-        staticsPerBuy = 1;
-        staticChargeDelay = 10;
+        doorRessourceCostText = doorVoltCost.ToString() +" Volts";
+        wireButton.SetActive(false);
+        staticButton.SetActive(false);
+        toolButton.SetActive(false);
         StartCoroutine(StaticsCharge());
     }
 
@@ -37,14 +54,22 @@ public class RessourceManager
     {
         volts += voltIncrease;
     }
+    public void staticCharge()
+    {
+        volts += voltIncrease * 1f / 100f;
+    }
+    public float priceIncrease(float basecost,float price,int bought, float scale)
+    {
+        return (price + scale*basecost * Mathf.Pow(1.05f, bought));
+    }
     public void betterWiresBuy()
     {
         if (volts >= wireCost)
         {
             volts -= wireCost;
-            wires += wiresPerBuy;
-            wireCost = wireCost*1.5f;
-            wiresPerBuy += 1;
+            wires += 1;
+            wireCost = priceIncrease(initialWireCost,wireCost, wiresBought, 1) ;
+            wiresBought += 1;
         }
     }
     public void staticGatheringBuy()
@@ -53,10 +78,10 @@ public class RessourceManager
         {
             volts -= staticsVoltCost;
             wires -= staticsWireCost;
-            staticsVoltCost = staticsVoltCost * 1.5f;
-            staticsWireCost = Mathf.RoundToInt(staticsWireCost * 1.5f);
-            statics += staticsPerBuy;
-            staticsPerBuy += 1;
+            staticsVoltCost = priceIncrease(staticsInitialVoltCost,staticsVoltCost,staticsBought, 2);
+            staticsWireCost += Mathf.RoundToInt(priceIncrease(staticsInitialWireCost,staticsWireCost, staticsBought, 1));
+            statics += 1;
+            staticsBought +=1;
         }
     }
 
@@ -67,9 +92,80 @@ public class RessourceManager
             yield return new WaitForSeconds(staticChargeDelay);
             for (int i = 0; i < statics; i++)
             {
-                charging();
+                staticCharge();
             }
         }
     }
 
+    public void toolsBuy() 
+    { 
+    if (volts >= toolsVoltCost && wires >= toolsWireCost && statics >= toolsStaticCost) 
+        {
+            volts -= toolsVoltCost;
+            wires -= toolsWireCost;
+            statics -= toolsStaticCost;
+            tools += 1;
+            toolsVoltCost = priceIncrease(toolsInitialVoltCost,toolsVoltCost,toolsBought, 3);
+            toolsWireCost = Mathf.RoundToInt(priceIncrease(toolsInitialWireCost, toolsWireCost, toolsBought, 2));
+            toolsStaticCost = Mathf.RoundToInt(priceIncrease(toolsInitialStaticCost, toolsStaticCost, toolsBought, 1));
+            toolsBought+=1;
+            wireCost = wireCost / 10;
+            staticsVoltCost = staticsVoltCost / 10;
+            staticsWireCost = staticsWireCost / 10;
+        }
+    }
+    public void  doorOppening()
+    {
+        if (doorState ==0 && volts >= doorVoltCost)
+        {
+            doorState = 1;
+            doorVoltCost = 5000;
+            doorWiresCost = 20;
+            wireCost = 10;
+            wiresBought = 1;
+            doorRessourceCostText = doorVoltCost.ToString() + "Volts and " + doorWiresCost.ToString() + " Wires";
+            volts = 0;
+            wireButton.SetActive(true);
+        }
+        if (doorState == 1 && volts >= doorVoltCost && wires>=doorWiresCost)
+        {
+            doorState = 2;
+            doorVoltCost = 50000;
+            doorWiresCost = 200;
+            doorStaticCost = 10;
+            wireCost = 10;
+            wiresBought = 1;
+            staticsVoltCost = 5000f;
+            staticsWireCost = 100;
+            staticsBought = 1;
+            doorRessourceCostText = doorVoltCost.ToString() + " Volts, " + doorWiresCost.ToString() + " Wires and "+ doorStaticCost.ToString() + " Statics";
+            volts = 0;
+            wires = 0;
+            staticButton.SetActive(true);
+        }
+        if (doorState == 2 && volts >= doorVoltCost && wires >= doorWiresCost && statics>=doorStaticCost)
+        {
+            doorState = 3;
+            doorVoltCost = 50000000;
+            doorWiresCost = 200000;
+            doorStaticCost = 10000;
+            doorToolsCost = 5;
+            wireCost = 10;
+            wiresBought = 1;
+            staticsVoltCost = 500f;
+            staticsWireCost = 10;
+            staticsBought = 1;
+            toolsWireCost = 200;
+            toolsVoltCost = 50000;
+            toolsStaticCost = 100;
+            doorRessourceCostText = doorVoltCost.ToString() + " Vowolts, " + doorWiresCost.ToString() + " Wires, " + doorStaticCost.ToString() + " Statics and " + doorToolsCost.ToString() + "touwuols";
+            volts = 0;
+            wires = 0;
+            statics = 0;
+            toolButton.SetActive(true);
+
+        }
+    }
+
 }
+
