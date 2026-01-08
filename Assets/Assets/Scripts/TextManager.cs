@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 
 public class TextManager : MonoBehaviour
+    //Gestion des textes dynamiques, effectués à chaque update. 
 {
     public TextMeshProUGUI voltChargeText;
     public TextMeshProUGUI voltAmountText;

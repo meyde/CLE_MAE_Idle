@@ -5,6 +5,11 @@ using System.Collections;
 public class RessourceManager
     : MonoBehaviour
 {
+//déclarations de toutes les variables; il y a 5 ressource,les 4 après le Volt possédant un cout initial utilisé pour le scaling du prix,
+//et un cout actuel, et ce pour chaque ressource précédente.
+//Pour la porte, on a un flag pour l'état de la porte, ainsi que les couts de passage.
+//Les ressources de récupération de volts en idle ont des variables supplémentaires nécessaires pour ajuster la vitesse de récupération.
+//Les volts sont laissés en Float volontairement. 
     public float volts;
     public int voltIncrease;
     public GameObject wireButton;
@@ -49,10 +54,9 @@ public class RessourceManager
     public int doorStaticCost;
     public int doorToolsCost;
     public int doorPanelCost;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //on cache tout les boutons et on lance les coroutines
         doorRessourceCostText = doorVoltCost.ToString() +" Volts";
         wireButton.SetActive(false);
         staticButton.SetActive(false);
@@ -64,26 +68,33 @@ public class RessourceManager
 
     // Update is called once per frame
     void Update()
+    //on ajuste le gain de volts par appui a chaque update.
     {
         voltIncrease = 1 + wires;
     }
     public void charging()
+        // Appui sur le bouton.
     {
+
         volts += voltIncrease;
     }
     public void staticCharge()
+        //Charge idle, uniquement appelé dans la coroutine associée
     {
         volts += voltIncrease * 1f / 100f;
     }
     public void panelCharge()
+        //Charge idle, uniquement appelé dans la coroutine associée
     {
         volts += voltIncrease * 10;
     }
     public float priceIncrease(float basecost,float price,int bought, float scale)
+        //calcul du scaling du prix. Plus la ressource considérée est antérieure a celle achetée, plus le scale sera élevé (et le prix montera plus vite)
     {
         return (price + scale*basecost * Mathf.Pow(1.05f, bought));
     }
     public void betterWiresBuy()
+        //achat de wires, prix ajusté.
     {
         if (volts >= wireCost)
         {
@@ -94,6 +105,7 @@ public class RessourceManager
         }
     }
     public void staticGatheringBuy()
+    //achat de statics, prix ajusté.
     {
         if (volts >= staticsVoltCost && wires>= staticsWireCost) 
         {
@@ -107,6 +119,7 @@ public class RessourceManager
     }
 
     public IEnumerator StaticsCharge()
+        //Coroutine des statics
     {
         while (true)
         { 
@@ -118,6 +131,7 @@ public class RessourceManager
         }
     }
     public IEnumerator PanelsCharge()
+        //coroutine des panels
     {
         while (true)
         {
@@ -128,9 +142,10 @@ public class RessourceManager
             }
         }
     }
-    public void toolsBuy() 
-    { 
-    if (volts >= toolsVoltCost && wires >= toolsWireCost && statics >= toolsStaticCost) 
+    public void toolsBuy()
+    //achat de tools, prix ajusté.
+    {
+        if (volts >= toolsVoltCost && wires >= toolsWireCost && statics >= toolsStaticCost) 
         {
             volts -= toolsVoltCost;
             wires -= toolsWireCost;
@@ -147,6 +162,7 @@ public class RessourceManager
     }
 
     public void panelsBuy()
+    //achat de panels, prix ajusté.
     {
         if (volts >= panelsVoltCost && wires >= panelsWireCost && statics >= panelsStaticCost && tools >= panelsToolCost)
         {
@@ -163,6 +179,7 @@ public class RessourceManager
     }
 
     public void  doorOppening()
+        //Gestion de la porte. Si les ressources sont amassées, le boutton d'après est activé, les ressources réinitialisées (ainsi que leurs prix).
     {
         if (doorState ==0 && volts >= doorVoltCost)
         {
