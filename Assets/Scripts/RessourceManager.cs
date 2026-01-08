@@ -5,18 +5,21 @@ using System.Collections;
 public class RessourceManager
     : MonoBehaviour
 {
-//déclarations de toutes les variables; il y a 5 ressource,les 4 après le Volt possédant un cout initial utilisé pour le scaling du prix,
-//et un cout actuel, et ce pour chaque ressource précédente.
-//Pour la porte, on a un flag pour l'état de la porte, ainsi que les couts de passage.
-//Les ressources de récupération de volts en idle ont des variables supplémentaires nécessaires pour ajuster la vitesse de récupération.
-//Les volts sont laissés en Float volontairement. 
+    //déclarations de toutes les variables; il y a 5 ressource,les 4 après le Volt possédant un cout initial utilisé pour le scaling du prix,
+    //et un cout actuel, et ce pour chaque ressource précédente.
+    //Pour la porte, on a un flag pour l'état de la porte, ainsi que les couts de passage.
+    //Les ressources de récupération de volts en idle ont des variables supplémentaires nécessaires pour ajuster la vitesse de récupération.
+    //Les volts sont laissés en Float volontairement. 
+    [Header("volts")]
     public float volts;
     public int voltIncrease;
+    [Header("wires")]
     public GameObject wireButton;
     public int wires;
     public float wireCost;
     public float initialWireCost;
     public int wiresBought;
+    [Header("statics")]
     public int statics;
     public GameObject staticButton;
     public float staticsInitialVoltCost;
@@ -25,6 +28,7 @@ public class RessourceManager
     public int staticsWireCost;
     public int staticsBought;
     public int staticChargeDelay;
+    [Header("tools")]
     public GameObject toolButton;
     public int tools;
     public float toolsVoltCost;
@@ -34,6 +38,7 @@ public class RessourceManager
     public int toolsInitialStaticCost;
     public int toolsStaticCost;
     public int toolsBought;
+    [Header("panels")]
     public GameObject panelButton;
     public int panels;
     public float panelsVoltCost;
@@ -46,6 +51,7 @@ public class RessourceManager
     public int panelsInitialToolCost;
     public int panelsBought;
     public int panelsChargeDelay;
+    [Header("door")]
     public string doorRessourceCostText;
     public string doorText;
     public int doorState;
